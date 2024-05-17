@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "vue-hooks is a library containing multiple custom hooks for Vue 3, designed to simplify common operations in Vue 3 application development.",
   "main": "dist/vue-hooks.cjs.js",
-  "module": "dist/vue-hooks.esm.js",
+  "module": "dist/vue-hooks.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "vite build",
