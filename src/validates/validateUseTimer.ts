@@ -3,6 +3,7 @@ import { TimerOptions } from '@/types/useTimerType'
 /**
  * 校验计时器参数选项
  * @param options 计时器参数选项
+ * @returns {TimerOptions} 经过验证后的计时器参数选项
  */
 export const validateOptions = (options: TimerOptions): TimerOptions => {
   const {

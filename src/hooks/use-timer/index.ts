@@ -68,7 +68,8 @@ export const useTimer = (options: TimerOptions): TimerReturn => {
     const currentTimeNow = performance.now()
     const elapsedTime = currentTimeNow - startTime
 
-    const elapsed = timeUnit === 'ms' ? elapsedTime : Math.floor(elapsedTime / 1000)
+    const elapsed =
+      timeUnit === 'ms' ? elapsedTime : Math.floor(elapsedTime / 1000)
 
     // 更新当前时间（秒或毫秒）
     currentTime.value = isCountdown
