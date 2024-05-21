@@ -7,23 +7,7 @@ import { TimerOptions, TimerReturn } from '@/types/useTimerType'
  * 计时器钩子函数
  *
  * @param {TimerOptions} options - 计时器参数选项
- * @param {number} options.initialTime - 初始时间（秒或毫秒，取决于 timeUnit）
- * @param {string} [options.timeUnit='s'] - 时间单位，默认值为 's'（秒），也可以是 'ms'（毫秒）
- * @param {number} [options.interval=1000] - 更新间隔（毫秒）
- * @param {boolean | string} [options.format=false] - 是否格式化时间或格式化字符串
- * @param {boolean} [options.isCountdown=true] - 是否为倒计时模式，默认值为 true
- * @param {boolean} [options.autoStart=false] - 是否自动开始计时，默认值为 false
- * @param {Function} [options.onUpdate] - 每次计时更新时的回调函数，接受当前时间作为参数
- * @param {Function} [options.onEnd] - 计时结束时的回调函数
- *
  * @returns {TimerReturn} 返回包含当前时间、格式化后时间对象、计时状态和控制计时的相关函数的对象
- * @returns {Ref<number>} returns.currentTime - 当前时间（秒或毫秒，取决于 timeUnit）
- * @returns {Ref<FormattedTime>} [returns.formattedTime] - 格式化后的当前时间对象
- * @returns {Ref<boolean>} returns.isRunning - 计时状态
- * @returns {() => void} returns.start - 开始计时
- * @returns {() => void} returns.pause - 暂停计时
- * @returns {() => void} returns.toggle - 切换计时状态
- * @returns {() => void} returns.reset - 重置计时
  */
 export const useTimer = (options: TimerOptions): TimerReturn => {
   // 参数校验
