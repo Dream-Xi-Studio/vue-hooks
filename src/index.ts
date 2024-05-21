@@ -1,1 +1,1 @@
-export * from './hooks/useTimer'
+export * from './hooks/use-timer'
