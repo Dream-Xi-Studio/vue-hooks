@@ -14,17 +14,17 @@ import { useWatermark } from 'vue-hooks'
 
 `useWatermark` 接受一个包含水印的自定义配置的对象：
 
-- `container` (HTMLElement | string): 容器元素，可以是一个 HTMLElement 对象或者是一个 CSS 选择器字符串，默认为 `body`。
-- `content` (string | string[] | Ref<string[]> | (() => string[])): 水印内容，可以是一个字符串或者一个字符串数组，默认为 `["watermark"]`。
-- `width` (number | string | Ref<number | string> | (() => number | string)): 水印宽度，可以是一个数字、带单位的字符串或者一个响应式值，默认为 `300`。
-- `height` (number | string | Ref<number | string> | (() => number | string)): 水印高度，可以是一个数字、带单位的字符串或者一个响应式值，默认为 `150`。
-- `top` (number | string): 水印距离容器顶部的距离，可以是一个数字或者一个带单位的字符串，默认为 `0`。
-- `left` (number | string): 水印距离容器左侧的距离，可以是一个数字或者一个带单位的字符串，默认为 `0`。
-- `opacity` (number): 水印透明度，取值范围为 `0` 到 `1`，默认为 `0.1`。
-- `zIndex` (number | string): 水印的层叠顺序，可以是一个数字或者一个字符串，默认为 `9999`。
-- `rotateDeg` (number): 水印旋转角度，单位为度，默认为 `45`。
-- `font` (string): 水印文字的字体样式，默认为 `"20px Arial"`。
-- `color` (string): 水印文字的颜色，默认为 `"#000000"`。
+- `container` (string | HTMLElement | (() => HTMLElement)): 容器元素，可以是一个 DOM 元素 ID 的字符串、HTMLElement 引用，或返回容器 HTMLElement 的函数，默认为 `document.body`。
+- `content` (string | string[] | Ref<string | string[]>): 水印内容，可以是一个字符串或字符串数组或响应式值，默认为 `["默认文本"]`。
+- `width` (number | Ref<number>): 水印宽度，可以是一个数字、带单位的字符串或响应式值，默认为 `240`。
+- `height` (number | Ref<number>): 水印高度，可以是一个数字、带单位的字符串或响应式值，默认为 `140`。
+- `top` (string | Ref<string>): 水印距离容器顶部的距离，可以是一个数字、带单位的字符串或响应式值，默认为 `'0px'`。
+- `left` (string | Ref<string>): 水印距离容器左侧的距离，可以是一个数字、带单位的字符串或响应式值，默认为 `'0px'`。
+- `opacity` (string | Ref<string>): 水印透明度，取值范围为 `0` 到 `1`，默认为 `0.1`。
+- `zIndex` (string | Ref<string>): 水印的层叠顺序，可以是一个数字、字符串或响应式值，默认为 `100000`。
+- `rotateDeg` (number | Ref<number>): 水印旋转角度，单位为度，默认为 `25`。
+- `font` (string | Ref<string>): 水印文字的字体样式，默认为 `"1.2rem Vedana"`。
+- `color` (string | Ref<string>): 水印文字的颜色，默认为 `"#666"`。
 
 ## 使用示例
 
@@ -39,7 +39,7 @@ import { useWatermark } from 'vue-hooks'
 import { ref } from 'vue'
 import { useWatermark } from '@/hooks/useWatermark'
 
-// 当content内容改变时，useWatermark钩子会自动重新渲染水印
+// 当 content 内容改变时，useWatermark 钩子会自动重新渲染水印
 const content = ref(['CONFIDENTIAL'])
 
 useWatermark({
@@ -61,9 +61,8 @@ useWatermark({
 ## 注意事项
 
 - 请确保传入的 `container` 参数指定了正确的容器元素，否则水印可能无法正常显示。
-- 当存在动态值时，请使用 `Ref<T> | (() => T)` 类型的变量直接传入，`useWatermark` 函数会自动重新渲染水印。
+- 当存在动态值时，请使用 `Ref<T>` 类型的变量直接传入，`useWatermark` 函数会自动重新渲染水印。
 
 ## 结束语
 
 `useWatermark` Hook 提供了一种简单而有效的方法来向页面中的指定容器元素添加水印。希望这个使用手册能帮助您快速上手 `useWatermark`，并在项目中成功应用它。
-```

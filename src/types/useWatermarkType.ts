@@ -1,3 +1,5 @@
+import { Ref } from 'vue'
+
 /**
  * 水印的配置选项
  */
@@ -6,32 +8,32 @@ export interface WatermarkConfig {
   container?: string | HTMLElement | (() => HTMLElement)
 
   /** 水印的内容，可以是字符串或多行字符串数组 */
-  content?: string | string[]
+  content?: string | string[] | Ref<string | string[]>
 
   /** 水印的宽度 */
-  width?: number
+  width?: number | Ref<number>
 
   /** 水印的高度 */
-  height?: number
+  height?: number | Ref<number>
 
   /** 水印距容器顶部边缘的距离 */
-  top?: string
+  top?: string | Ref<string>
 
   /** 水印距容器左侧边缘的距离 */
-  left?: string
+  left?: string | Ref<string>
 
   /** 水印的旋转角度（单位：度） */
-  rotateDeg?: number
+  rotateDeg?: number | Ref<number>
 
   /** 水印文字的字体样式 */
-  font?: string
+  font?: string | Ref<string>
 
   /** 水印文字的颜色 */
-  color?: string
+  color?: string | Ref<string>
 
   /** 水印的不透明度 */
-  opacity?: string
+  opacity?: string | Ref<string>
 
   /** 水印的层叠顺序 */
-  zIndex?: string
+  zIndex?: string | Ref<string>
 }

@@ -1,5 +1,4 @@
 import { toValue, watchEffect, onMounted, onUnmounted } from 'vue'
-import { validateConfig } from '@/validates/validateUseWatermark'
 import { getContainerElement, debounce } from '@/utils/index'
 import { WatermarkConfig } from '@/types/useWatermarkType'
 
@@ -9,29 +8,26 @@ import { WatermarkConfig } from '@/types/useWatermarkType'
  * @param {WatermarkConfig} customConfig - 水印的自定义配置
  * @returns {void}
  */
-export const useWatermark = (customConfig: WatermarkConfig = {}): void => {
-  // 生成一个唯一的水印元素 ID，结合时间戳和随机数
+export const useWatermark = ({
+  container = document.body,
+  ...customConfig
+}: WatermarkConfig = {}): void => {
+  // 获取容器元素
+  const containerElement = getContainerElement(container)
+  // 生成水印元素ID，结合时间戳和随机数确保唯一性
   const WATERMARK_ELEMENT_ID = `watermark_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   // 存储 MutationObserver 实例
   let watermarkObserver: MutationObserver | null = null
-
-  // 验证并规范化自定义配置
-  const validatedConfig = validateConfig(customConfig)
 
   /**
    * 从容器中移除水印元素
    * @returns {void}
    */
   const removeWatermarkElement = (): void => {
-    const container = getContainerElement(validatedConfig.container!)
     const watermarkElement = document.getElementById(WATERMARK_ELEMENT_ID)
-    if (watermarkElement) {
-      // 停止观察水印元素的变化
-      watermarkObserver?.disconnect()
-      watermarkObserver = null
-      // 从容器中移除水印元素
-      container.removeChild(watermarkElement)
-    }
+    watermarkElement?.remove()
+    watermarkObserver?.disconnect()
+    watermarkObserver = null
   }
 
   /**
@@ -39,38 +35,36 @@ export const useWatermark = (customConfig: WatermarkConfig = {}): void => {
    * @returns {string} 水印图像的数据 URL
    */
   const generateWatermarkImage = (): string => {
+    const {
+      width = 240,
+      height = 140,
+      rotateDeg = 25,
+      font = '1.2rem Vedana',
+      color = '#666',
+      content = '默认文本'
+    } = customConfig
     const canvas = document.createElement('canvas')
-    canvas.width = toValue(validatedConfig.width) as number
-    canvas.height = toValue(validatedConfig.height) as number
-
+    canvas.width = toValue(width) as number
+    canvas.height = toValue(height) as number
     const context = canvas.getContext('2d')
     if (context) {
-      // 清空画布
       context.clearRect(0, 0, canvas.width, canvas.height)
       context.save()
-      // 设置画布原点为中心点并旋转
       context.translate(canvas.width / 2, canvas.height / 2)
-      context.rotate(
-        (-(toValue(validatedConfig.rotateDeg) as number) * Math.PI) / 180
-      )
-      // 设置字体样式
-      context.font = toValue(validatedConfig.font) as string
-      context.fillStyle = toValue(validatedConfig.color) as string
+      context.rotate((-(toValue(rotateDeg) as number) * Math.PI) / 180)
+      context.font = toValue(font) as string
+      context.fillStyle = toValue(color) as string
       context.textAlign = 'center'
       context.textBaseline = 'middle'
-
-      // 绘制水印文本
-      const contentArray = Array.isArray(validatedConfig.content)
-        ? validatedConfig.content
-        : [validatedConfig.content]
+      // 处理内容为数组或单个字符串的情况
+      const contentArray = Array.isArray(toValue(content))
+        ? (toValue(content) as string[])
+        : [toValue(content) as string]
       contentArray.forEach((text, index) => {
         context.fillText(text as string, 0, index * 25)
       })
-
       context.restore()
     }
-
-    // 返回水印图像的数据 URL
     return canvas.toDataURL('image/png')
   }
 
@@ -81,28 +75,31 @@ export const useWatermark = (customConfig: WatermarkConfig = {}): void => {
   const renderWatermark = (): void => {
     // 首先移除现有的水印元素
     removeWatermarkElement()
-
     // 生成水印图像
     const watermarkImageUrl = generateWatermarkImage()
-    const container = getContainerElement(validatedConfig.container!)
-
+    // 应用自定义配置或默认值
+    const {
+      top = '0px',
+      left = '0px',
+      opacity = '0.1',
+      zIndex = '100000'
+    } = customConfig
     // 创建水印 div 元素
     const watermarkDiv = document.createElement('div')
     watermarkDiv.id = WATERMARK_ELEMENT_ID
     Object.assign(watermarkDiv.style, {
       pointerEvents: 'none', // 禁用水印元素的指针事件
       position: 'absolute',
-      top: toValue(validatedConfig.top),
-      left: toValue(validatedConfig.left),
-      opacity: toValue(validatedConfig.opacity),
-      zIndex: toValue(validatedConfig.zIndex),
+      top: toValue(top),
+      left: toValue(left),
+      opacity: toValue(opacity),
+      zIndex: toValue(zIndex),
       width: '100%',
       height: '100%',
       background: `url(${watermarkImageUrl}) left top repeat`
     })
-
     // 将水印元素添加到容器中
-    container.appendChild(watermarkDiv)
+    containerElement.appendChild(watermarkDiv)
     // 开始观察水印元素的变化
     observeWatermarkChanges(watermarkDiv)
   }
@@ -121,7 +118,6 @@ export const useWatermark = (customConfig: WatermarkConfig = {}): void => {
       childList: true,
       subtree: true
     }
-
     const handleMutations: MutationCallback = mutations => {
       for (const mutation of mutations) {
         // 当水印元素被移除时，重新渲染水印
@@ -143,10 +139,7 @@ export const useWatermark = (customConfig: WatermarkConfig = {}): void => {
 
     // 创建并启动 MutationObserver 实例
     watermarkObserver = new MutationObserver(handleMutations)
-    watermarkObserver.observe(
-      getContainerElement(validatedConfig.container!),
-      observerOptions
-    )
+    watermarkObserver.observe(containerElement, observerOptions)
   }
 
   // 在组件挂载时渲染水印
